@@ -86,6 +86,51 @@ import Link from "next/link";
 
         </div>
       </section>
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center mb-14">
+          <h2 className="text-4xl font-bold">
+            Nos Formations
+          </h2>
+
+          <p className="mt-4 text-gray-600">
+            Des formations pratiques adaptées aux besoins du marché.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+
+          <div className="border rounded-2xl p-8">
+            <h3 className="text-2xl font-semibold mb-4">
+              🖥️ Bureautique & Outils Numériques
+            </h3>
+
+            <p className="text-gray-600">
+              Maîtrisez Word, Excel, PowerPoint, Internet et les outils de productivité.
+            </p>
+          </div>
+
+          <div className="border rounded-2xl p-8">
+            <h3 className="text-2xl font-semibold mb-4">
+              🤖 Intelligence Artificielle
+            </h3>
+
+            <p className="text-gray-600">
+              Découvrez ChatGPT, Claude, les outils IA et les méthodes de travail assistées par l'intelligence artificielle.
+            </p>
+          </div>
+
+          <div className="border rounded-2xl p-8">
+            <h3 className="text-2xl font-semibold mb-4">
+              💼 Insertion Professionnelle
+            </h3>
+
+            <p className="text-gray-600">
+              Préparez votre CV, votre profil LinkedIn et développez vos compétences professionnelles.
+            </p>
+          </div>
+
+        </div>
+      </section>
     </>
   );
 }
