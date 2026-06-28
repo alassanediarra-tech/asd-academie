@@ -131,6 +131,41 @@ import Link from "next/link";
 
         </div>
       </section>
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center mb-14">
+          <h2 className="text-4xl font-bold">
+            ASD en quelques chiffres
+          </h2>
+
+          <p className="mt-4 text-gray-600">
+            Une formation conçue pour développer des compétences concrètes.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+
+          <div className="border rounded-2xl p-8">
+            <h3 className="text-4xl font-bold">8</h3>
+            <p className="mt-2 text-gray-600">Semaines</p>
+          </div>
+
+          <div className="border rounded-2xl p-8">
+            <h3 className="text-4xl font-bold">3</h3>
+            <p className="mt-2 text-gray-600">Domaines</p>
+          </div>
+
+          <div className="border rounded-2xl p-8">
+            <h3 className="text-4xl font-bold">100%</h3>
+            <p className="mt-2 text-gray-600">Pratique</p>
+          </div>
+
+          <div className="border rounded-2xl p-8">
+            <h3 className="text-4xl font-bold">Hybride</h3>
+            <p className="mt-2 text-gray-600">En ligne & Présentiel</p>
+          </div>
+
+        </div>
+      </section>
     </>
   );
 }
