@@ -2,37 +2,59 @@ import Link from "next/link";
   export default function HomePage() {
   return (
     <>
-      <section className="max-w-7xl mx-auto px-6 py-24">
-        <div className="max-w-3xl">
+      <section className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-          <span className="text-blue-600 font-semibold">
-            Académie des Compétences Numériques et de l'IA
-          </span>
+          {/* Colonne gauche */}
+          <div>
 
-          <h1 className="text-5xl font-bold mt-6 leading-tight">
-            Développez vos compétences numériques et maîtrisez l'Intelligence Artificielle.
-          </h1>
+            <span className="text-blue-600 font-semibold uppercase tracking-wider">
+              Académie des Compétences Numériques et de l'IA
+            </span>
 
-          <p className="mt-6 text-lg text-gray-600">
-            ASD accompagne étudiants, professionnels et entrepreneurs
-            dans l'acquisition de compétences pratiques en bureautique,
-            numérique et intelligence artificielle.
-          </p>
+            <h1 className="text-5xl lg:text-6xl font-bold mt-6 leading-tight text-slate-900">
+              Développez vos compétences numériques et maîtrisez l'Intelligence Artificielle.
+            </h1>
 
-          <div className="flex gap-4 mt-10">
-            <Link
-              href="/formations"
-              className="bg-black text-white px-6 py-3 rounded-lg"
-            >
-              Découvrir nos formations
-            </Link>
+            <p className="mt-6 text-xl text-slate-600 leading-9">
+              ASD accompagne étudiants, professionnels et entrepreneurs
+              dans l'acquisition de compétences pratiques en bureautique,
+              numérique et intelligence artificielle.
+            </p>
 
-            <Link
-              href="/inscription"
-              className="border px-6 py-3 rounded-lg"
-            >
-              S'inscrire
-            </Link>
+            <div className="flex gap-4 mt-10">
+              <Link
+                href="/formations"
+                className="bg-black text-white px-6 py-3 rounded-lg"
+              >
+                Découvrir nos formations
+              </Link>
+
+              <Link
+                href="/inscription"
+                className="border px-6 py-3 rounded-lg"
+              >
+                S'inscrire
+              </Link>
+            </div>
+
+          </div>
+
+          {/* Colonne droite */}
+          <div className="hidden lg:flex justify-center">
+            <div className="w-[400px] h-[400px] rounded-3xl bg-blue-100 flex items-center justify-center shadow-xl">
+              <div className="text-center">
+                <div className="text-7xl mb-4">🤖</div>
+
+                <h3 className="text-2xl font-bold">
+                  Intelligence Artificielle
+                </h3>
+
+                <p className="mt-4 text-slate-600">
+                  Apprenez les outils numériques et l'IA pour votre avenir professionnel.
+                </p>
+              </div>
+            </div>
           </div>
 
         </div>
@@ -51,7 +73,7 @@ import Link from "next/link";
 
         <div className="grid md:grid-cols-3 gap-8">
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300">
             <h3 className="text-2xl font-semibold mb-4">
               🖥️ Compétences numériques
             </h3>
@@ -62,7 +84,7 @@ import Link from "next/link";
             </p>
           </div>
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-300">
             <h3 className="text-2xl font-semibold mb-4">
               🤖 Intelligence Artificielle
             </h3>
@@ -73,7 +95,7 @@ import Link from "next/link";
             </p>
           </div>
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300">
             <h3 className="text-2xl font-semibold mb-4">
               💼 Insertion professionnelle
             </h3>
@@ -99,7 +121,7 @@ import Link from "next/link";
 
         <div className="grid md:grid-cols-3 gap-8">
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300">
             <h3 className="text-2xl font-semibold mb-4">
               🖥️ Bureautique & Outils Numériques
             </h3>
@@ -109,7 +131,7 @@ import Link from "next/link";
             </p>
           </div>
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300">
             <h3 className="text-2xl font-semibold mb-4">
               🤖 Intelligence Artificielle
             </h3>
@@ -119,7 +141,7 @@ import Link from "next/link";
             </p>
           </div>
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300">
             <h3 className="text-2xl font-semibold mb-4">
               💼 Insertion Professionnelle
             </h3>
@@ -144,22 +166,22 @@ import Link from "next/link";
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300">
             <h3 className="text-4xl font-bold">8</h3>
             <p className="mt-2 text-gray-600">Semaines</p>
           </div>
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300">
             <h3 className="text-4xl font-bold">3</h3>
             <p className="mt-2 text-gray-600">Domaines</p>
           </div>
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300">
             <h3 className="text-4xl font-bold">100%</h3>
             <p className="mt-2 text-gray-600">Pratique</p>
           </div>
 
-          <div className="border rounded-2xl p-8">
+          <div className="border rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 hover:border-blue-300 transition-all duration-300">
             <h3 className="text-4xl font-bold">Hybride</h3>
             <p className="mt-2 text-gray-600">En ligne & Présentiel</p>
           </div>
