@@ -1,5 +1,6 @@
 "use client";
 
+import { supabase } from "@/lib/supabase";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,20 +17,35 @@ type InscriptionData = z.infer<typeof inscriptionSchema>;
 
 export default function InscriptionPage() {
   const {
-  register,
-  handleSubmit,
-  formState: { errors },
-} = useForm<InscriptionData>({
-  resolver: zodResolver(inscriptionSchema),
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<InscriptionData>({
+    resolver: zodResolver(inscriptionSchema),
 });
 
-const onSubmit = (data: InscriptionData) => {
-  alert("Formulaire envoyé !");
-  console.log(data);
+const onSubmit = async (data: InscriptionData) => {
+  const { error } = await supabase
+    .from("inscriptions")
+    .insert([data]);
+
+  if (error) {
+    console.error(error);
+    alert("Erreur lors de l'envoi.");
+    return;
+  }
+
+  alert("Inscription envoyée avec succès !");
+  reset();
 };
 
   return (
     <section className="max-w-3xl mx-auto px-6 py-20">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-14 bg-white rounded-3xl shadow-lg border p-8 space-y-6"
+      >
       <div className="text-center">
         <h1 className="text-5xl font-bold text-slate-900">
           Inscription
@@ -40,11 +56,6 @@ const onSubmit = (data: InscriptionData) => {
         </p>
       </div>
 
-      <form
-  onSubmit={handleSubmit(onSubmit)}
-  className="mt-14 bg-white rounded-3xl shadow-lg border p-8 space-y-6"
->
-
         <div>
           <label className="block font-medium mb-2">
             Nom complet
@@ -52,9 +63,9 @@ const onSubmit = (data: InscriptionData) => {
 
           <input
             type="text"
+            {...register("nom")}
             className="w-full border rounded-lg p-3"
             placeholder="Votre nom complet"
-            {...register("nom")}
           />
 
           {errors.nom && (
@@ -71,9 +82,9 @@ const onSubmit = (data: InscriptionData) => {
 
           <input
             type="email"
+            {...register("email")}
             className="w-full border rounded-lg p-3"
             placeholder="votre@email.com"
-            {...register("email")}
           />
 
           {errors.email && (
@@ -90,9 +101,9 @@ const onSubmit = (data: InscriptionData) => {
 
           <input
             type="tel"
+            {...register("telephone")}
             className="w-full border rounded-lg p-3"
             placeholder="+221 XX XXX XX XX"
-            {...register("telephone")}
           />
 
           {errors.telephone && (
@@ -108,8 +119,8 @@ const onSubmit = (data: InscriptionData) => {
           </label>
 
           <select
-            className="w-full border rounded-lg p-3"
             {...register("formation")}
+            className="w-full border rounded-lg p-3"
           >
             <option value="Bureautique & Outils Numériques">
               Bureautique & Outils Numériques
@@ -131,10 +142,10 @@ const onSubmit = (data: InscriptionData) => {
           </label>
 
           <textarea
+            {...register("message")}
             rows={5}
             className="w-full border rounded-lg p-3"
             placeholder="Parlez-nous de vos objectifs..."
-            {...register("message")}
           />
         </div>
 
