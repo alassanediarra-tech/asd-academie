@@ -28,6 +28,8 @@ export default function AdminPage() {
   const router = useRouter();
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
     const [search, setSearch] = useState("");
+      const [selectedInscription, setSelectedInscription] =
+        useState<Inscription | null>(null);
 
   useEffect(() => {
   checkUser();
@@ -137,6 +139,9 @@ const inscrits = inscriptions.filter(
 async function handleLogout() {
   await supabase.auth.signOut();
   router.push("/login");
+}
+function handleView(inscription: Inscription) {
+  setSelectedInscription(inscription);
 }
   return (
     <section className="max-w-7xl mx-auto px-6 py-20">
@@ -267,20 +272,80 @@ async function handleLogout() {
                   </select>
                 </td>
                 <td className="p-4">
-                <button
-                  onClick={() =>
-                    deleteInscription(inscription.id)
-                  }
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-                >
-                  Supprimer
-                </button>
-              </td>
+                  <div className="flex gap-2">
+
+                    <button
+                      onClick={() => handleView(inscription)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Voir
+                    </button>
+
+                    <button
+                      onClick={() => deleteInscription(inscription.id)}
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                      Supprimer
+                    </button>
+
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+      {selectedInscription && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onClick={() => setSelectedInscription(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+
+            <h2 className="text-3xl font-bold mb-6">
+              Détails de la candidature
+            </h2>
+
+            <div className="space-y-4">
+
+              <p><strong>Nom :</strong> {selectedInscription.nom}</p>
+
+              <p><strong>Email :</strong> {selectedInscription.email}</p>
+
+              <p><strong>Téléphone :</strong> {selectedInscription.telephone}</p>
+
+              <p><strong>Formation :</strong> {selectedInscription.formation}</p>
+
+              <p><strong>Statut :</strong> {selectedInscription.statut}</p>
+              <p>
+                <strong>Date :</strong>{" "}
+                {new Date(selectedInscription.created_at).toLocaleString("fr-FR")}
+              </p>
+              <div>
+                <strong>Message :</strong>
+
+                <div className="mt-2 border rounded-lg p-4 bg-slate-50 min-h-[120px]">
+                  {selectedInscription.message || "Aucun message laissé."}
+                </div>
+              </div>
+
+            </div>
+
+            <div className="mt-8 flex justify-end">
+              <button
+                onClick={() => setSelectedInscription(null)}
+                className="bg-slate-700 text-white px-6 py-3 rounded-xl hover:bg-slate-800"
+              >
+                Fermer
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </section>
   );
 }
