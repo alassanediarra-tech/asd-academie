@@ -1,32 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { getLoginErrorMessage } from "@/lib/auth/login-errors";
+import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
-    async function handleLogin(
-        e: React.FormEvent
-        ) {
-        e.preventDefault();
+      useEffect(() => {
+        checkSession();
+      }, []);
 
-        const { error } =
-            await supabase.auth.signInWithPassword({
-            email,
-            password,
-            });
+      async function checkSession() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (session) {
+          router.replace("/admin");
+        }
+      }
+    async function handleLogin(
+      e: React.FormEvent<HTMLFormElement>
+    ) {
+      e.preventDefault();
+
+      setIsLoading(true);
+
+      try {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
         if (error) {
-            alert("Email ou mot de passe incorrect.");
-            console.error(error);
-            return;
+          console.error(error);
+          toast.error(getLoginErrorMessage(error));
+          return;
         }
 
+        toast.success("Connexion réussie !");
         router.push("/admin");
-        }
+
+      } catch (error) {
+        console.error(error);
+        toast.error(getLoginErrorMessage(error));
+
+      } finally {
+        setIsLoading(false);
+      }
+    }
   return (
     <section className="max-w-md mx-auto px-6 py-20">
       <div className="bg-white rounded-3xl shadow-lg border p-8">
@@ -76,9 +103,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-4 rounded-xl hover:bg-blue-700 transition-colors"
+            disabled={isLoading}
+            className="w-full bg-blue-600 text-white py-4 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Se connecter
+            {isLoading ? "Connexion en cours..." : "Se connecter"}
           </button>
         </form>
       </div>
