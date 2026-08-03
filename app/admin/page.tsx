@@ -14,16 +14,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-type Inscription = {
-  id: number;
-  nom: string;
-  email: string;
-  telephone: string;
-  formation: string;
-  message: string;
-  created_at: string;
-};
-
 export default function AdminPage() {
   const router = useRouter();
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
@@ -32,20 +22,38 @@ export default function AdminPage() {
         useState<Inscription | null>(null);
 
   useEffect(() => {
-  checkUser();
-}, []);
-async function checkUser() {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    async function checkUser() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-  if (!session) {
-    router.push("/login");
-    return;
-  }
+      if (!session) {
+        router.push("/login");
+        return;
+      }
 
-  getInscriptions();
-}
+      const { data: profile, error } = await supabase
+        .from("profiles")
+        .select("role, is_active")
+        .eq("id", session.user.id)
+        .single();
+
+      if (
+        error ||
+        !profile ||
+        profile.role !== "admin" ||
+        !profile.is_active
+      ) {
+        await supabase.auth.signOut();
+        router.push("/login");
+        return;
+      }
+
+      getInscriptions();
+    }
+
+    checkUser();
+  }, [router]);
 
   async function getInscriptions() {
     const { data, error } = await supabase
