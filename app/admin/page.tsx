@@ -13,6 +13,7 @@ type Inscription = {
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -62,7 +63,8 @@ export default function AdminPage() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error(error);
+      console.error("Erreur chargement inscriptions :", error);
+      toast.error("Impossible de charger les inscriptions.");
       return;
     }
 
@@ -82,11 +84,12 @@ export default function AdminPage() {
       .eq("id", id);
 
     if (error) {
-      console.error(error);
-      alert("Erreur lors de la suppression.");
+      console.error("Erreur suppression inscription :", error);
+      toast.error("Impossible de supprimer la candidature.");
       return;
     }
 
+    toast.success("Candidature supprimée.");
     getInscriptions();
   }
 
@@ -100,21 +103,23 @@ export default function AdminPage() {
         .includes(search.toLowerCase())
   );
   async function updateStatut(
-    id: number,
-    statut: string
-  ) {
-    const { error } = await supabase
-      .from("inscriptions")
-      .update({ statut })
-      .eq("id", id);
+  id: number,
+  statut: string
+) {
+  const { error } = await supabase
+    .from("inscriptions")
+    .update({ statut })
+    .eq("id", id);
 
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    getInscriptions();
+  if (error) {
+    console.error("Erreur modification statut :", error);
+    toast.error("Impossible de modifier le statut.");
+    return;
   }
+
+  toast.success("Statut mis à jour.");
+  getInscriptions();
+}
   function getStatusColor(statut: string) {
     switch (statut) {
       case "Nouveau":
@@ -145,7 +150,15 @@ const inscrits = inscriptions.filter(
 ).length;
 
 async function handleLogout() {
-  await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error("Erreur déconnexion :", error);
+    toast.error("Impossible de vous déconnecter.");
+    return;
+  }
+
+  toast.success("Déconnexion réussie.");
   router.push("/login");
 }
 function handleView(inscription: Inscription) {
