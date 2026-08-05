@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 
 const inscriptionSchema = z.object({
   nom: z.string().min(3, "Le nom est trop court"),
@@ -13,9 +14,17 @@ const inscriptionSchema = z.object({
   message: z.string().optional(),
 });
 
+type Formation = {
+  id: number;
+  nom: string;
+  slug: string;
+};
+
 type InscriptionData = z.infer<typeof inscriptionSchema>;
 
 export default function InscriptionPage() {
+  const [formations, setFormations] = useState<Formation[]>([]);
+
   const {
     register,
     handleSubmit,
@@ -24,6 +33,25 @@ export default function InscriptionPage() {
   } = useForm<InscriptionData>({
     resolver: zodResolver(inscriptionSchema),
 });
+
+useEffect(() => {
+  async function getFormations() {
+    const { data, error } = await supabase
+      .from("formations")
+      .select("id, nom, slug")
+      .eq("is_active", true)
+      .order("ordre", { ascending: true });
+
+    if (error) {
+      console.error("Erreur chargement formations :", error);
+      return;
+    }
+
+    setFormations(data ?? []);
+  }
+
+  getFormations();
+}, []);
 
 const onSubmit = async (data: InscriptionData) => {
   const { error } = await supabase
@@ -122,17 +150,13 @@ const onSubmit = async (data: InscriptionData) => {
             {...register("formation")}
             className="w-full border rounded-lg p-3"
           >
-            <option value="Bureautique & Outils Numériques">
-              Bureautique & Outils Numériques
-            </option>
+            <option value="">-- Choisir une formation --</option>
 
-            <option value="Intelligence Artificielle">
-              Intelligence Artificielle
-            </option>
-
-            <option value="Insertion Professionnelle">
-              Insertion Professionnelle
-            </option>
+            {formations.map((formation) => (
+              <option key={formation.id} value={formation.nom}>
+                {formation.nom}
+              </option>
+            ))}
           </select>
         </div>
 
