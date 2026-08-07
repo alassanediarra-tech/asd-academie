@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const inscriptionSchema = z.object({
   nom: z.string().min(3, "Le nom est trop court"),
@@ -24,6 +25,7 @@ type InscriptionData = z.infer<typeof inscriptionSchema>;
 
 export default function InscriptionPage() {
   const [formations, setFormations] = useState<Formation[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -54,18 +56,27 @@ useEffect(() => {
 }, []);
 
 const onSubmit = async (data: InscriptionData) => {
-  const { error } = await supabase
-    .from("inscriptions")
-    .insert([data]);
+  try {
+    setIsLoading(true);
 
-  if (error) {
-    console.error(error);
-    alert("Erreur lors de l'envoi.");
-    return;
+    const { error } = await supabase
+      .from("inscriptions")
+      .insert([data]);
+
+    if (error) {
+      throw error;
+    }
+
+    toast.success("Inscription envoyée avec succès !");
+    reset();
+
+  } catch (error) {
+    console.error("Erreur inscription :", error);
+    toast.error("Impossible d'envoyer votre candidature.");
+
+  } finally {
+    setIsLoading(false);
   }
-
-  alert("Inscription envoyée avec succès !");
-  reset();
 };
 
   return (
@@ -175,9 +186,12 @@ const onSubmit = async (data: InscriptionData) => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-4 rounded-xl hover:bg-blue-700 transition-colors"
+          disabled={isLoading}
+          className="w-full bg-blue-600 text-white py-4 rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Envoyer ma candidature
+          {isLoading
+            ? "Envoi en cours..."
+            : "Envoyer ma candidature"}
         </button>
 
       </form>
