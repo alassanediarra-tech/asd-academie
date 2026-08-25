@@ -8,10 +8,26 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const inscriptionSchema = z.object({
-  nom: z.string().min(3, "Le nom est trop court"),
+  nom: z
+  .string()
+  .min(3, "Le nom est trop court")
+  .regex(
+    /^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$/,
+    "Le nom contient des caractères invalides"
+  ),
   email: z.string().email("Email invalide"),
-  telephone: z.string().min(9, "Numéro invalide"),
-  formation: z.string(),
+  telephone: z
+  .string()
+  .min(9, "Numéro invalide")
+  .regex(
+    /^[0-9+() -]+$/,
+    "Le numéro contient des caractères invalides"
+  )
+  .refine(
+    (value) => (value.match(/[0-9]/g) || []).length >= 9,
+    "Le numéro doit contenir au moins 9 chiffres"
+  ),
+  formation: z.string().min(1, "Veuillez choisir une formation"),
   message: z.string().optional(),
 });
 
@@ -22,6 +38,50 @@ type Formation = {
 };
 
 type InscriptionData = z.infer<typeof inscriptionSchema>;
+
+function formatTelephone(value: string) {
+  const trimmed = value.trim();
+
+  // Numéro sénégalais avec indicatif +221
+  if (trimmed.startsWith("+221")) {
+    const digits = trimmed.slice(4).replace(/\D/g, "").slice(0, 9);
+
+    if (digits.length === 0) {
+      return "+221";
+    }
+
+    const formatted = digits.replace(
+      /^(\d{2})(\d{3})(\d{2})(\d{2}).*/,
+      "$1 $2 $3 $4"
+    );
+
+    return `+221 ${formatted}`;
+  }
+
+  // Numéro sénégalais sans indicatif
+  if (/^\d/.test(trimmed) && !trimmed.startsWith("+")) {
+    const digits = trimmed.replace(/\D/g, "").slice(0, 9);
+
+    return digits.replace(
+      /^(\d{2})(\d{3})(\d{2})(\d{2}).*/,
+      "$1 $2 $3 $4"
+    );
+  }
+
+  // Autres numéros internationaux :
+  // on ne force aucun découpage.
+  return value;
+}
+
+function normalizeTelephone(value: string) {
+  const trimmed = value.trim();
+
+  if (trimmed.startsWith("+")) {
+    return `+${trimmed.slice(1).replace(/\D/g, "")}`;
+  }
+
+  return trimmed.replace(/\D/g, "");
+}
 
 export default function InscriptionPage() {
   const [formations, setFormations] = useState<Formation[]>([]);
@@ -35,6 +95,8 @@ export default function InscriptionPage() {
   } = useForm<InscriptionData>({
     resolver: zodResolver(inscriptionSchema),
 });
+
+const telephoneRegister = register("telephone");
 
 useEffect(() => {
   async function getFormations() {
@@ -59,9 +121,16 @@ const onSubmit = async (data: InscriptionData) => {
   try {
     setIsLoading(true);
 
-    const { error } = await supabase
-      .from("inscriptions")
-      .insert([data]);
+    const normalizedTelephone = normalizeTelephone(data.telephone);
+
+const { error } = await supabase
+  .from("inscriptions")
+  .insert([
+    {
+      ...data,
+      telephone: normalizedTelephone,
+    },
+  ]);
 
     if (error) {
       throw error;
@@ -69,6 +138,11 @@ const onSubmit = async (data: InscriptionData) => {
 
     toast.success("Inscription envoyée avec succès !");
     reset();
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
 
   } catch (error) {
     console.error("Erreur inscription :", error);
@@ -137,14 +211,18 @@ const onSubmit = async (data: InscriptionData) => {
           <label className="block font-medium mb-2">
             Téléphone
           </label>
-
           <input
             type="tel"
-            {...register("telephone")}
+            {...telephoneRegister}
+            onChange={(e) => {
+              const formattedValue = formatTelephone(e.target.value);
+
+              e.target.value = formattedValue;
+              telephoneRegister.onChange(e);
+            }}
             className="w-full border rounded-lg p-3"
             placeholder="+221 XX XXX XX XX"
           />
-
           {errors.telephone && (
             <p className="text-red-500 text-sm mt-1">
               {errors.telephone.message}
@@ -169,6 +247,12 @@ const onSubmit = async (data: InscriptionData) => {
               </option>
             ))}
           </select>
+
+          {errors.formation && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.formation.message}
+            </p>
+          )}
         </div>
 
         <div>
