@@ -247,72 +247,86 @@ function handleView(inscription: Inscription) {
             </tr>
           </thead>
           <tbody>
-            {filteredInscriptions.map((inscription) => (
-              <tr
-                key={inscription.id}
-                className="border-t">
-                <td className="p-4">
-                  {inscription.nom}
-                </td>
-
-                <td className="p-4">
-                  {inscription.email}
-                </td>
-
-                <td className="p-4">
-                  {inscription.telephone}
-                </td>
-
-                <td className="p-4">
-                  {inscription.formation}
-                </td>
-                <td className="p-4">
-                  <select
-                    value={inscription.statut}
-                    onChange={(e) =>
-                      updateStatut(
-                        inscription.id,
-                        e.target.value
-                      )
-                    }
-                    className={`border rounded-lg p-2 ${getStatusColor(
-                      inscription.statut
-                    )}`}
-                  >
-                    <option value="Nouveau">
-                      Nouveau
-                    </option>
-
-                    <option value="Contacté">
-                      Contacté
-                    </option>
-
-                    <option value="Inscrit">
-                      Inscrit
-                    </option>
-                  </select>
-                </td>
-                <td className="p-4">
-                  <div className="flex gap-2">
-
-                    <button
-                      onClick={() => handleView(inscription)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Voir
-                    </button>
-
-                    <button
-                      onClick={() => deleteInscription(inscription.id)}
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                      Supprimer
-                    </button>
-
-                  </div>
+            {filteredInscriptions.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={6}
+                  className="p-8 text-center text-slate-500"
+                >
+                  {search.trim() === ""
+                    ? "Aucune candidature enregistrée pour le moment."
+                    : "Aucune candidature ne correspond à votre recherche."}
                 </td>
               </tr>
-            ))}
+            ) : (
+              filteredInscriptions.map((inscription) => (
+                <tr
+                  key={inscription.id}
+                  className="border-t"
+                >
+                  <td className="p-4">
+                    {inscription.nom}
+                  </td>
+
+                  <td className="p-4">
+                    {inscription.email}
+                  </td>
+
+                  <td className="p-4">
+                    {inscription.telephone}
+                  </td>
+
+                  <td className="p-4">
+                    {inscription.formation}
+                  </td>
+
+                  <td className="p-4">
+                    <select
+                      value={inscription.statut}
+                      onChange={(e) =>
+                        updateStatut(
+                          inscription.id,
+                          e.target.value
+                        )
+                      }
+                      className={`border rounded-lg p-2 ${getStatusColor(
+                        inscription.statut
+                      )}`}
+                    >
+                      <option value="Nouveau">
+                        Nouveau
+                      </option>
+
+                      <option value="Contacté">
+                        Contacté
+                      </option>
+
+                      <option value="Inscrit">
+                        Inscrit
+                      </option>
+                    </select>
+                  </td>
+
+                  <td className="p-4">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleView(inscription)}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Voir
+                      </button>
+
+                      <button
+                        onClick={() => deleteInscription(inscription.id)}
+                        className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
